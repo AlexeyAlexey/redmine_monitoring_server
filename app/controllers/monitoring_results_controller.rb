@@ -9,11 +9,18 @@ class MonitoringResultsController < ApplicationController
 
 
   def index
-  	@monitoring = @project.monitoring_results.first
+    #@project => "monitoring_results_#{postfix}"
+    #RedmineMonitoringServer
+  	#@monitoring = @project.monitoring_results.first
     
+    #table_name = RedmineMonitoringServer.connection.quote("monitoring_results")
+    
+    db_request = RedmineMonitoringServer.connection.exec_query("select * from monitoring_results where project_id='#{@project.id}' LIMIT 1")
+    
+    @monitoring = MonitoringResult.new("monitoring_results", db_request)
     @controllers_list = @monitoring.result.keys
-    @controllers_list.delete_at(0)
-    @controllers_list.delete_at(0)
+    
+    @controllers_list.delete_if{|el| ["controllers", "severity"].include?(el)}
 
   end
 

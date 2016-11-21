@@ -1,7 +1,7 @@
 ActionDispatch::Callbacks.to_prepare do
   Rails.logger.info 'Starting Redmine Monitoring Server plugin'
 
-  Project.send(:include, MonitoringServer::ProjectPatch)
+  #Project.send(:include, MonitoringServer::ProjectPatch)
 end
 Redmine::Plugin.register :redmine_monitoring_server do
   name 'Redmine Monitoring Server plugin'
