@@ -17,7 +17,7 @@ class MonitoringResultsController < ApplicationController
 
     #db_request = RedmineMonitoringServer.connection.exec_query("select * from monitoring_results where project_id='#{@project.id}' LIMIT 1")
     
-    @monitoring = MonitoringResult.new("monitoring_results_1")
+    @monitoring = MonitoringResult.new("monitoring_results")
     @monitoring.where(" project_id = ? ", 1)
     @monitoring.limit(1)
     @monitoring = @monitoring.exec_query.first
