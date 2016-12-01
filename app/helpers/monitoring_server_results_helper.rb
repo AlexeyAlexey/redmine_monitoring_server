@@ -1,4 +1,4 @@
-module MonitoringResultsHelper
+module MonitoringServerResultsHelper
 
   def chart_controllers_number_of_requests_in_hour(monitoring, controllers_list)
     controllers_list.each do |controller_name|

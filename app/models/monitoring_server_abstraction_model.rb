@@ -1,4 +1,4 @@
-class MonitoringAbstractionModel
+class MonitoringServerAbstractionModel
   unloadable
   include ActiveModel::Validations
   include ActiveModel::Conversion

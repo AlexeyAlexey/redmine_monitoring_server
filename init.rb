@@ -12,8 +12,8 @@ Redmine::Plugin.register :redmine_monitoring_server do
   author_url 'http://example.com/about'
 
   project_module :monitoring_server do
-    permission :monitoring_results, { :monitoring_results => [:index]}
+    permission :monitoring_server_results, { :monitoring_server_results => [:index]}
   end
 
-  menu :project_menu, :monitoring_results, { :controller => 'monitoring_results', :action => 'index' }, :caption => 'Monitoring Results'
+  menu :project_menu, :monitoring_server_results, { :controller => 'monitoring_server_results', :action => 'index' }, :caption => 'Monitoring Server Results'
 end

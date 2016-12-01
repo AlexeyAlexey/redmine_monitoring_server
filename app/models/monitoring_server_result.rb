@@ -1,4 +1,4 @@
-class MonitoringResult
+class MonitoringServerResult
   unloadable
   include ActiveModel::Validations
   include ActiveModel::Conversion
