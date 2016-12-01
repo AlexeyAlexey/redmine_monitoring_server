@@ -1,13 +1,19 @@
 module MonitoringModelQueryMethodsHelper
 
   
-  def initialize(table_name, columns = [])  	
+  def initialize(db_connection, table_name, columns = [])  	
   	@table_name = table_name
-    @select = ["SELECT ", "* "]
+
+    @select = []
     @request = []
     @records = []
     @columns = columns
 
+    @where = []
+    
+    @query = []
+
+    @db_connection = db_connection
     unless @columns.empty?
       build_fields
     end
@@ -38,12 +44,48 @@ module MonitoringModelQueryMethodsHelper
   end
 
 #query methods
-  def select(columns)
-    @select[1] = columns.map{|column| quote_column_name(column)}.join(', ')
+  def select(columns = [])
+    select = []
+    if columns.empty?
+      select << "#{quote_table_name(@table)}.*"
+    else
+      columns.map{|table| select << "#{quote_table_name(@table)}.#{columns}"}
+    end
+    select = "SELECT " + select.jon(', ')
+    @query << select
+    
     self
   end
 
-  def where(str, *args)
+  def from(table_name=nil)
+    table_name ||= @table_name
+    @query << " FROM #{quote_table_name(table_name)}} "
+  end
+
+  def where(table_name=nil, columns, unions, values)
+    table_name ||= @table_name
+
+    where = [" WHERE "]
+    where << columns.map do |column|
+      "#{quote_table_name(table_name)}.#{quote_column_name(column)} = ?"
+    end
+    str = where.join(" #{filter_unions(unions)} ")
+    
+    values.each do |value|
+      str = str.sub(/\?/, "'#{quote(value)}'")
+    end
+
+    @query << str
+
+    self
+  end
+  def filter_unions(unions)
+    unions.reject{|union| ["AND", "OR", "and", "or"].include?(union)}
+  end
+
+  
+
+  def where_without_union(str, *args)
     args.each do |value|
       str = str.sub(/\?/, "'#{quote(value)}'")
     end
@@ -68,6 +110,7 @@ module MonitoringModelQueryMethodsHelper
     self
   end
 
+
   def all 
     @request << " "
     self
@@ -82,7 +125,7 @@ module MonitoringModelQueryMethodsHelper
   end
 
   def exec_query
-    @request_res = RedmineMonitoringServer.connection.exec_query(to_query)
+    @request_res = @db_connection.connection.exec_query(to_query)
     rows = @request_res.rows
 
     @columns = @request_res.columns
@@ -121,15 +164,15 @@ module MonitoringModelQueryMethodsHelper
   end
 
   def quote(value)
-    RedmineMonitoringServer.connection.quote(value)
+    @db_connection.connection.quote(value)
   end
 
   def quote_table_name(table_name)
-    RedmineMonitoringServer.connection.quote_table_name(table_name)
+    @db_connection.connection.quote_table_name(table_name)
   end
 
   def quote_column_name(column_name)
-    RedmineMonitoringServer.connection.quote_column_name(column_name)
+    @db_connection.connection.quote_column_name(column_name)
   end
 
 

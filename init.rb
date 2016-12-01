@@ -1,5 +1,16 @@
+
+
+
 ActionDispatch::Callbacks.to_prepare do
   Rails.logger.info 'Starting Redmine Monitoring Server plugin'
+
+  db_connection_list = YAML::load(File.open('plugins/redmine_monitoring_server/config/database_redmine_monitoring_server.yml') ).keys
+
+  db_connection_list.each do |class_name|
+    database_redmine_monitoring_server = YAML::load(File.open('plugins/redmine_monitoring_server/config/database_redmine_monitoring_server.yml') )[class_name]
+    cl = Object.const_set((class_name + "_monitoring_server").classify, Class.new(ActiveRecord::Base){self.abstract_class = true} )
+    cl.establish_connection( database_redmine_monitoring_server )
+  end
 
   #Project.send(:include, MonitoringServer::ProjectPatch)
 end
