@@ -6,3 +6,5 @@ http://c3js.org/reference.html
 
 
 https://github.com/roidrage/lograge/issues/10
+
+ActiveRecord::Base.connection.columns("action_controller_loggers")

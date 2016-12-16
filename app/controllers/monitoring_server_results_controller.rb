@@ -16,15 +16,22 @@ class MonitoringServerResultsController < ApplicationController
     #table_name = RedmineMonitoringServer.connection.quote_table_name("monitoring_results")
 
     #db_request = RedmineMonitoringServer.connection.exec_query("select * from monitoring_results where project_id='#{@project.id}' LIMIT 1")
-    
-    @monitoring = MonitoringServerResult.new("monitoring_results")
-    @monitoring.where(" project_id = ? ", 1)
-    @monitoring.limit(1)
-    @monitoring = @monitoring.exec_query.first
+    #initialize(db_connection, table_name, columns = [])   
+    db_connection = MonitoringServerAbstractionModel::DB_CONNECTIONS_LIST["redmine_clear_development"]
+    @monitoring = MonitoringServerAbstractionModel.new(db_connection, "monitoring_results")
 
-    @controllers_list = @monitoring.result.keys
+    #@monitoring = MonitoringServerResult.new("monitoring_results")
+    #@monitoring.where(" project_id = ? ", 1)
+    #@monitoring.limit(1)
+    #@monitoring = @monitoring.exec_query.first
+
+    #@controllers_list = @monitoring.result.keys
     
-    @controllers_list.delete_if{|el| ["controllers", "severity"].include?(el)}
+    #@controllers_list.delete_if{|el| ["controllers", "severity"].include?(el)}
+
+  end
+
+  def build_filter_form
 
   end
 

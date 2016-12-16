@@ -4,15 +4,21 @@ module MonitoringModelQueryMethodsHelper
   def initialize(db_connection, table_name, columns = [])  	
   	@table_name = table_name
 
-    @select = []
+    @select = {}
+    @from   = {}
+    @where  = {}
+    @left_join = {}
+    @join_tables = {}
+    @on     = {}
+
     @request = []
     @records = []
     @columns = columns
 
-    @where = []
     
-    @query = []
-
+    
+    #@query = []
+    
     @db_connection = db_connection
     unless @columns.empty?
       build_fields
@@ -31,6 +37,12 @@ module MonitoringModelQueryMethodsHelper
   def columns=(columns)
     @columns = columns
   end
+  def request
+    @request
+  end
+  def request=(request)
+    @request = request
+  end
 
 
   def each(&block)
@@ -42,54 +54,113 @@ module MonitoringModelQueryMethodsHelper
   def first
     @records.first
   end
-
+  def db_connection
+    @db_connection
+  end
+  def db_connection=(db_connection)
+    @db_connection = db_connection
+  end
+  def records
+    @records
+  end
 #query methods
   def select(columns = [])
     select = []
     if columns.empty?
-      select << "#{quote_table_name(@table)}.*"
+      select << "#{quote_table_name(@table_name)}.*"
     else
-      columns.map{|table| select << "#{quote_table_name(@table)}.#{columns}"}
+      columns.map{|table| select << "#{quote_table_name(@table_name)}.#{columns}"}
     end
-    select = "SELECT " + select.jon(', ')
-    @query << select
-    
+    select = "SELECT " + select.join(', ')
+
+    @request.push select
+
+    @select[@request.size - 1] = {request: select}
+
     self
+  end
+  def select_h
+    @select
   end
 
   def from(table_name=nil)
     table_name ||= @table_name
-    @query << " FROM #{quote_table_name(table_name)}} "
-  end
-
-  def where(table_name=nil, columns, unions, values)
-    table_name ||= @table_name
-
-    where = [" WHERE "]
-    where << columns.map do |column|
-      "#{quote_table_name(table_name)}.#{quote_column_name(column)} = ?"
-    end
-    str = where.join(" #{filter_unions(unions)} ")
+    from_str = " FROM #{quote_table_name(table_name)} "
     
-    values.each do |value|
-      str = str.sub(/\?/, "'#{quote(value)}'")
-    end
+    @request.push from_str
 
-    @query << str
+    @from[@request.size - 1] = {request: from_str} 
 
     self
   end
-  def filter_unions(unions)
-    unions.reject{|union| ["AND", "OR", "and", "or"].include?(union)}
+  def from_h
+    @from    
   end
 
+  def where(table_name=nil, columns, inequalities, unions, values)
+    table_name ||= @table_name
+
+    where = []
+    where << columns.map do |column|
+      "#{quote_table_name(table_name)}.#{quote_column_name(column)} __inequalities__ ? "
+    end
+    where_str = where.join(" __union__ ")
+    
+    inequalities.each do |inequality|
+      where_str = where_str.sub(/__inequalities__/, "#{filter_inequalities(inequalities, inequality)}")
+    end
+    unions.each do |union|
+      where_str = where_str.sub(/__union__/, "#{filter_unions(unions, union)}")
+    end
+
+    values.each do |value|
+      where_str = where_str.sub(/\?/, "#{quote(value)}")
+    end
+    
+    where_str = " WHERE " + where_str
+    @request.push where_str
+    
+    @where[@request.size - 1] = {request: where_str}
+
+    self
+  end
+  def where_h
+    @where
+  end
+  def filter_unions(unions, union)
+    unions.find{|union| ["AND", "OR"].include?(union.upcase)}
+  end
+  def filter_inequalities(inequalities, inequality)
+    inequalities.find{|union| ["=", ">", "<", "<>"].include?(inequality)}
+  end
+
+  #LEFT JOIN table2 ON table1.id=table2.id
+  def left_join(join_table_name)
+    left_join = " LEFT JOIN #{quote_table_name(join_table_name)} "
+
+        
+
+    @request.push left_join
+
+    @join_tables[@request.size - 1] = {table_name: join_table_name}
+    @left_join[@request.size - 1] = {request: left_join}
+
+    self
+  end
+  def on(join_table, join_columns)
+    on = "ON #{quote_table_name(@table_name)}.#{quote_column_name(join_columns[0])} = #{quote_table_name(join_table)}.#{quote_column_name(join_columns[1])}"
   
+    @on[@request.size - 1] = {request: on}
+
+    @request.push on
+  end
 
   def where_without_union(str, *args)
+
     args.each do |value|
-      str = str.sub(/\?/, "'#{quote(value)}'")
+      str = str.sub(/\?/, "#{quote(value)}")
     end
-    @request.empty? ? @request << str : @request << " AND #{str} "
+    @request << (" WHERE " + str)
       
     self
   end
@@ -120,7 +191,7 @@ module MonitoringModelQueryMethodsHelper
     if @request.empty?
       "SELECT * FROM #{quote_table_name(@table_name)}"
     else
-      "SELECT * FROM #{quote_table_name(@table_name)} WHERE " + @request.join(' ')
+      @request.join(' ')
     end
   end
 
@@ -139,7 +210,7 @@ module MonitoringModelQueryMethodsHelper
   end
 
   def build_record(row)
-    new_record = self.class.new(table_name, @columns)
+    new_record = self.class.new(db_connection, @table_name, @columns)
 
     @request_res.columns.each_with_index do |column_name, index|
       new_record.send("#{column_name}=", row[index])

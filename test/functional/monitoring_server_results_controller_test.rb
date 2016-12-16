@@ -5,4 +5,10 @@ class MonitoringServerResultsControllerTest < ActionController::TestCase
   def test_truth
     assert true
   end
+
+  def test_build_filter_form
+  	#User.current = nil 
+    #Setting.plugin_redmine_monitoring_server[''] = "true"
+    
+  end
 end

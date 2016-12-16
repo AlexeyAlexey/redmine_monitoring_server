@@ -1,0 +1,11 @@
+<%content_for :header_tags do %>
+  <%=stylesheet_link_tag 'monitoring_server_settings_menu', :plugin => 'redmine_monitoring_server' %>
+<%end%>
+
+<div id="monitoring-server-settings-menu" >
+  <div id="wrap">
+    <div id="menu" >
+      <%=render_menu(:monitoring_server_settings_menu)%>
+    </div>
+  </div>
+</div>

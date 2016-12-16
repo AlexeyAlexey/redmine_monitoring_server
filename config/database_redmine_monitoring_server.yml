@@ -13,3 +13,11 @@ redmine_2_5_stable:
   username: redmine_clear
   password: ""
   encoding: utf8
+
+test:
+  adapter: mysql2
+  database: redmine_test
+  host: localhost
+  username: redmine_test
+  password: ""
+  encoding: utf8

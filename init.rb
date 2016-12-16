@@ -16,7 +16,7 @@ ActionDispatch::Callbacks.to_prepare do
 end
 Redmine::Plugin.register :redmine_monitoring_server do
   name 'Redmine Monitoring Server plugin'
-  author 'Author name'
+  author 'Alexey Kondratenko'
   description 'This is a plugin for Redmine'
   version '0.0.1'
   url 'http://example.com/path/to/plugin'
@@ -27,4 +27,11 @@ Redmine::Plugin.register :redmine_monitoring_server do
   end
 
   menu :project_menu, :monitoring_server_results, { :controller => 'monitoring_server_results', :action => 'index' }, :caption => 'Monitoring Server Results'
+
+  settings :default => {'empty' => true}, :partial => 'settings/monitoring_server_settings'
+
+  Redmine::MenuManager.map :monitoring_server_settings_menu do |menu|
+    menu.push :monitoring_server_settings, { :controller => 'monitoring_server_settings', :action => 'index'}, {}
+    menu.push :new, { :controller => 'monitoring_server_settings', :action => 'new'}, {}
+  end
 end

@@ -1,0 +1,86 @@
+#monitoring-server-settings-menu  #wrap {
+  margin-bottom: 6px;
+}
+
+#monitoring-server-settings-menu #menu {  
+  height:48px; 
+   background:#E6E6E6; 
+ -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); 
+}
+
+#monitoring-server-settings-menu a:link {color: #4a4a4a; text-decoration:none;}
+#monitoring-server-settings-menu a:visited {color: #4a4a4a; text-decoration:none; color:inherit;}
+#monitoring-server-settings-menu a:hover {text-decoration:none;}
+#monitoring-server-settings-menu a:active {text-decoration:none;}
+
+#monitoring-server-settings-menu ul {	  
+  text-align: left;
+  display: inline;
+  margin: 0;
+  padding: 15px 4px 17px 0;
+  list-style: none; 
+}
+
+#monitoring-server-settings-menu ul li {
+  font: bold 12px/18px sans-serif;
+  color: #4a4a4a;
+  display: inline-block;
+  margin-right: -4px;
+  position: relative;
+  padding: 15px 20px;
+  background: #;
+  cursor: pointer;
+  -webkit-transition: all 0.2s;
+  -moz-transition: all 0.2s;
+  -ms-transition: all 0.2s;
+  -o-transition: all 0.2s;
+  transition: all 0.2s;
+}
+
+#monitoring-server-settings-menu ul li:hover {
+  background: #;
+  color: #666;
+  opacity:1;
+   -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);  
+}
+
+#monitoring-server-settings-menu ul li ul {
+  padding: 0;
+  position: absolute;
+  top: 48px;
+  left: 0;
+  width: 190px;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  display: none;
+  opacity: 0;
+  visibility: hidden;
+  -webkit-transiton: opacity 0.2s;
+  -moz-transition: opacity 0.2s;
+  -ms-transition: opacity 0.2s;
+  -o-transition: opacity 0.2s;
+  -transition: opacity 0.2s;
+}
+
+#monitoring-server-settings-menu ul li ul li { 
+  background: #e6e6e6; 
+  display: block; 
+  color: #666;  
+}
+
+#monitoring-server-settings-menu ul li ul li:hover { 
+  margin-top:5px;
+  margin-bottom:5px;
+ -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);}
+#monitoring-server-settings-menu ul li:hover ul {
+  display: block;
+  opacity: 1;
+  visibility: visible;  
+}
